@@ -13,10 +13,10 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
-class PartnerAccountEntityRepositoryTest {
+class PartnerAccountRepositoryTest {
 
     @Resource
-    PartnerAccountEntityRepository partnerAccountEntityRepository;
+    PartnerAccountRepository partnerAccountRepository;
 
     @Test
     @DisplayName("사용자 계정 DB 저장")
@@ -35,7 +35,7 @@ class PartnerAccountEntityRepositoryTest {
                 .build();
 
         //when
-        PartnerAccountEntity savedPartnerAccountEntity = partnerAccountEntityRepository.save(partnerAccountEntity);
+        PartnerAccountEntity savedPartnerAccountEntity = partnerAccountRepository.save(partnerAccountEntity);
 
         //then
         assertThat(savedPartnerAccountEntity).isNotNull();
