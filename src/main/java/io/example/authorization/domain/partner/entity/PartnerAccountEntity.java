@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.Set;
 
 @Entity
@@ -37,4 +38,9 @@ public class PartnerAccountEntity {
 
     @Enumerated(EnumType.STRING)
     private PartnerStatus status; // 파트너 상태
+
+    public void signUp(){
+        this.roles = Collections.singleton(PartnerRole.FORBIDDEN);
+        this.status = PartnerStatus.API_NOT_AVAILABLE;
+    }
 }
