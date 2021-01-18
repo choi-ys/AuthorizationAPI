@@ -1,19 +1,17 @@
 package io.example.authorization.repository;
 
+import io.example.authorization.common.BaseTest;
 import io.example.authorization.domain.partner.entity.PartnerEntity;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import javax.annotation.Resource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@ActiveProfiles("test")
-class PartnerRepositoryTest {
+@Disabled
+class PartnerRepositoryTest extends BaseTest {
 
     @Resource
     PartnerRepository partnerRepository;
@@ -22,17 +20,7 @@ class PartnerRepositoryTest {
     @DisplayName("사용자 계정 DB 저장")
     public void savePartnerEntity(){
         //given
-        String partnerId = "choi-ys";
-        String partnerPassword = "password";
-        String partnerEmail = "project.log.062@gmail.com";
-        String partnerCompanyName = "naver";
-
-        PartnerEntity partnerEntity = PartnerEntity.builder()
-                .partnerId(partnerId)
-                .partnerPassword(partnerPassword)
-                .partnerEmail(partnerEmail)
-                .partnerCompanyName(partnerCompanyName)
-                .build();
+        PartnerEntity partnerEntity = partnerGenerator.buildPartnerEntity();
 
         //when
         PartnerEntity savedPartnerEntity = partnerRepository.save(partnerEntity);
