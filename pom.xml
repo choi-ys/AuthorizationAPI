@@ -55,11 +55,32 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+        <!--
+            - maven Central URL : https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+            - [용석:2020-08-17] : 입력값에 의해 결정되거나, 시스템이 자동으로 값을 할당하는 항목의 입력값을 제한하기 위해 분리한
+                                  요청 객체와 Entity객체의 Mapping을 위한 modelmapper dependency 추가
+        -->
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>2.3.9</version>
+        </dependency>
 
         <!-- About Authentication -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- About Validation -->
+        <!--
+            - Maven Central URL : https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api
+            - [용석:2020-08-21] : Java Bean객체의 기본 유효성 검사를 위한 spring-boot-starter-validation 추가
+            - 참고 URL : https://meetup.toast.com/posts/223
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         
         <!-- About Test -->
