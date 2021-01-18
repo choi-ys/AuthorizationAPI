@@ -1,6 +1,7 @@
 package io.example.authorization.domain.partner.entity;
 
 import io.example.authorization.domain.partner.dto.PartnerSignUp;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
@@ -9,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PartnerEntityTest {
 
     @Test
+    @DisplayName("ModelMapper를 이용한 객체 Mapping")
     public void modelMapperTest(){
         //given
         String partnerId = "choi-ys";
