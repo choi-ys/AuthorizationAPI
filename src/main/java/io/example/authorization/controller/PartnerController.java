@@ -5,8 +5,8 @@ import io.example.authorization.domain.common.ProcessingResult;
 import io.example.authorization.domain.common.resource.ErrorsEntityModel;
 import io.example.authorization.domain.common.resource.ProcessingResultEntityModel;
 import io.example.authorization.domain.partner.dto.PartnerSignUp;
-import io.example.authorization.domain.partner.entity.PartnerAccountEntity;
-import io.example.authorization.service.PartnerAccountService;
+import io.example.authorization.domain.partner.entity.PartnerEntity;
+import io.example.authorization.service.PartnerService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -25,19 +25,19 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RestController
 @RequestMapping(value = "/api/partner")
 @RequiredArgsConstructor
-public class PartnerAccountController {
+public class PartnerController {
 
     private final ModelMapper modelMapper;
-    private final PartnerAccountService partnerAccountService;
+    private final PartnerService partnerService;
 
     @PostMapping
-    public ResponseEntity createPartnerAccount(@RequestBody @Valid PartnerSignUp partnerSignUp, Errors errors) throws JsonProcessingException {
+    public ResponseEntity createPartner(@RequestBody @Valid PartnerSignUp partnerSignUp, Errors errors) throws JsonProcessingException {
         if(errors.hasErrors()){
             return this.badRequest(errors);
         }
 
-        PartnerAccountEntity partnerAccountEntity = this.modelMapper.map(partnerSignUp, PartnerAccountEntity.class);
-        ProcessingResult processingResult = this.partnerAccountService.savePartnerAccount(partnerAccountEntity);
+        PartnerEntity partnerEntity = this.modelMapper.map(partnerSignUp, PartnerEntity.class);
+        ProcessingResult processingResult = this.partnerService.savePartner(partnerEntity);
 
         if(processingResult.isSuccess()){
             return this.createResponse(processingResult);
@@ -63,7 +63,7 @@ public class PartnerAccountController {
      * POST 요청의 created 응답 처리
      */
     private ResponseEntity<ProcessingResultEntityModel> createResponse(ProcessingResult processingResult) {
-        URI location = linkTo(PartnerAccountController.class).withSelfRel().toUri();
+        URI location = linkTo(PartnerController.class).withSelfRel().toUri();
         return ResponseEntity.created(location).body(new ProcessingResultEntityModel(processingResult));
     }
 

@@ -6,7 +6,7 @@ import org.modelmapper.ModelMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PartnerAccountEntityTest {
+class PartnerEntityTest {
 
     @Test
     public void modelMapperTest(){
@@ -26,12 +26,12 @@ class PartnerAccountEntityTest {
         ModelMapper modelMapper = new ModelMapper();
 
         //when
-        PartnerAccountEntity partnerAccountEntity = modelMapper.map(partnerSignUp, PartnerAccountEntity.class);
+        PartnerEntity partnerEntity = modelMapper.map(partnerSignUp, PartnerEntity.class);
 
         //then
-        assertThat(partnerAccountEntity.getPartnerId()).isEqualTo(partnerId);
-        assertThat(partnerAccountEntity.getPartnerPassword()).isEqualTo(partnerPassword);
-        assertThat(partnerAccountEntity.getPartnerEmail()).isEqualTo(partnerEmail);
-        assertThat(partnerAccountEntity.getPartnerCompanyName()).isEqualTo(partnerCompanyName);
+        assertThat(partnerEntity.getPartnerId()).isEqualTo(partnerId);
+        assertThat(partnerEntity.getPartnerPassword()).isEqualTo(partnerPassword);
+        assertThat(partnerEntity.getPartnerEmail()).isEqualTo(partnerEmail);
+        assertThat(partnerEntity.getPartnerCompanyName()).isEqualTo(partnerCompanyName);
     }
 }
