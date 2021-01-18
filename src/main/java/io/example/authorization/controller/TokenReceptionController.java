@@ -26,7 +26,7 @@ public class TokenReceptionController {
 
     @GetMapping(value = "/callback")
     public AuthToken callbackSocial(@RequestParam String code) throws JsonProcessingException {
-        String credentials = "clientId:clientSecret";
+        String credentials = "kstmClientId:kstmClientSecret";
         String encodedCredentials = new String(Base64.encodeBase64(credentials.getBytes()));
 
         HttpHeaders headers = new HttpHeaders();
