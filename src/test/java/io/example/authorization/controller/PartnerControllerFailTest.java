@@ -1,5 +1,6 @@
 package io.example.authorization.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.example.authorization.config.CustomMediaTypeConstants;
 import io.example.authorization.domain.partner.dto.PartnerSignUp;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -16,11 +16,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
-class PartnerAccountControllerSuccessTest {
+class PartnerControllerFailTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -29,19 +28,10 @@ class PartnerAccountControllerSuccessTest {
     ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("사용자 계정 생성 API")
-    public void createPartnerAccount() throws Exception {
+    @DisplayName("사용자 계정 생성 API : 값이 없는 사용자 계정 생성 요청")
+    public void createPartnerAPI_EmptyRequest() throws Exception {
         //given
-        String partnerId = "choi-ys";
-        String partnerPassword = "password";
-        String partnerEmail = "project.log.062@gmail.com";
-        String partnerCompanyName = "naver";
-
         PartnerSignUp partnerSignUp = PartnerSignUp.builder()
-                .partnerId(partnerId)
-                .partnerPassword(partnerPassword)
-                .partnerEmail(partnerEmail)
-                .partnerCompanyName(partnerCompanyName)
                 .build();
 
         //when
@@ -51,11 +41,7 @@ class PartnerAccountControllerSuccessTest {
                 .content(this.objectMapper.writeValueAsString(partnerSignUp))
         );
 
-        resultActions.andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(header().exists(HttpHeaders.LOCATION))
-                .andExpect(header().exists(HttpHeaders.CONTENT_TYPE))
-                .andExpect(jsonPath("_links").exists())
-        ;
+        //then
+        resultActions.andDo(print());
     }
 }

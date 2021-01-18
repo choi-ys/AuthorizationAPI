@@ -1,7 +1,7 @@
 package io.example.authorization.service;
 
 import io.example.authorization.domain.common.ProcessingResult;
-import io.example.authorization.domain.partner.entity.PartnerAccountEntity;
+import io.example.authorization.domain.partner.entity.PartnerEntity;
 import io.example.authorization.domain.partner.entity.PartnerRole;
 import io.example.authorization.domain.partner.entity.PartnerStatus;
 import org.junit.jupiter.api.DisplayName;
@@ -16,24 +16,24 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
-class PartnerAccountServiceTest {
+class PartnerServiceTest {
 
     @Autowired
-    PartnerAccountService partnerAccountService;
+    PartnerService partnerService;
 
     @Autowired
     PasswordEncoder passwordEncoder;
 
     @Test
     @DisplayName("회원 생성 Service")
-    public void savePartnerAccount(){
+    public void savePartner(){
         //given
         String partnerId = "choi-ys";
         String partnerPassword = "password";
         String partnerEmail = "project.log.062@gmail.com";
         String partnerCompanyName = "naver";
 
-        PartnerAccountEntity givenPartnerAccountEntity = PartnerAccountEntity.builder()
+        PartnerEntity givenPartnerEntity = PartnerEntity.builder()
                 .partnerId(partnerId)
                 .partnerPassword(partnerPassword)
                 .partnerEmail(partnerEmail)
@@ -41,21 +41,21 @@ class PartnerAccountServiceTest {
                 .build();
 
         //when
-        ProcessingResult processingResult = partnerAccountService.savePartnerAccount(givenPartnerAccountEntity);
-        PartnerAccountEntity createdPartnerAccountEntity = (PartnerAccountEntity) processingResult.getData();
+        ProcessingResult processingResult = partnerService.savePartner(givenPartnerEntity);
+        PartnerEntity createdPartnerEntity = (PartnerEntity) processingResult.getData();
 
         //then
         // partnerNo항목 Auto Increment 적용 여부 확인
-        assertThat(createdPartnerAccountEntity.getPartnerNo()).isEqualTo(1);
-        assertThat(createdPartnerAccountEntity.getPartnerId().equals(givenPartnerAccountEntity.getPartnerId()));
+        assertThat(createdPartnerEntity.getPartnerNo()).isEqualTo(1);
+        assertThat(createdPartnerEntity.getPartnerId().equals(givenPartnerEntity.getPartnerId()));
 
         // partnerPassword항목 암호화 적용 여부 확인
-        assertThat(this.passwordEncoder.matches(givenPartnerAccountEntity.getPartnerPassword(), createdPartnerAccountEntity.getPartnerPassword()));
-        assertThat(createdPartnerAccountEntity.getPartnerEmail().equals(givenPartnerAccountEntity.getPartnerEmail()));
-        assertThat(createdPartnerAccountEntity.getPartnerCompanyName().equals(givenPartnerAccountEntity.getPartnerEmail()));
+        assertThat(this.passwordEncoder.matches(givenPartnerEntity.getPartnerPassword(), createdPartnerEntity.getPartnerPassword()));
+        assertThat(createdPartnerEntity.getPartnerEmail().equals(givenPartnerEntity.getPartnerEmail()));
+        assertThat(createdPartnerEntity.getPartnerCompanyName().equals(givenPartnerEntity.getPartnerEmail()));
 
         // 사용자 계정 생성 시 초기값 적용 여부확인
-        assertThat(createdPartnerAccountEntity.getRoles().equals(PartnerRole.FORBIDDEN));
-        assertThat(createdPartnerAccountEntity.getStatus().equals(PartnerStatus.API_NOT_AVAILABLE));
+        assertThat(createdPartnerEntity.getRoles().equals(PartnerRole.FORBIDDEN));
+        assertThat(createdPartnerEntity.getStatus().equals(PartnerStatus.API_NOT_AVAILABLE));
     }
 }

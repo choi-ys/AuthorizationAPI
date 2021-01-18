@@ -1,6 +1,6 @@
 package io.example.authorization.repository;
 
-import io.example.authorization.domain.partner.entity.PartnerAccountEntity;
+import io.example.authorization.domain.partner.entity.PartnerEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,21 +13,21 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
-class PartnerAccountRepositoryTest {
+class PartnerRepositoryTest {
 
     @Resource
-    PartnerAccountRepository partnerAccountRepository;
+    PartnerRepository partnerRepository;
 
     @Test
     @DisplayName("사용자 계정 DB 저장")
-    public void savePartnerAccountEntity(){
+    public void savePartnerEntity(){
         //given
         String partnerId = "choi-ys";
         String partnerPassword = "password";
         String partnerEmail = "project.log.062@gmail.com";
         String partnerCompanyName = "naver";
 
-        PartnerAccountEntity partnerAccountEntity = PartnerAccountEntity.builder()
+        PartnerEntity partnerEntity = PartnerEntity.builder()
                 .partnerId(partnerId)
                 .partnerPassword(partnerPassword)
                 .partnerEmail(partnerEmail)
@@ -35,14 +35,14 @@ class PartnerAccountRepositoryTest {
                 .build();
 
         //when
-        PartnerAccountEntity savedPartnerAccountEntity = partnerAccountRepository.save(partnerAccountEntity);
+        PartnerEntity savedPartnerEntity = partnerRepository.save(partnerEntity);
 
         //then
-        assertThat(savedPartnerAccountEntity).isNotNull();
-        assertThat(savedPartnerAccountEntity.getPartnerNo()).isNotEqualTo(0);
-        assertThat(partnerAccountEntity.getPartnerId()).isEqualTo(savedPartnerAccountEntity.getPartnerId());
-        assertThat(partnerAccountEntity.getPartnerPassword()).isEqualTo(savedPartnerAccountEntity.getPartnerPassword());
-        assertThat(partnerAccountEntity.getPartnerEmail()).isEqualTo(savedPartnerAccountEntity.getPartnerEmail());
-        assertThat(partnerAccountEntity.getPartnerCompanyName()).isEqualTo(savedPartnerAccountEntity.getPartnerCompanyName());
+        assertThat(savedPartnerEntity).isNotNull();
+        assertThat(savedPartnerEntity.getPartnerNo()).isNotEqualTo(0);
+        assertThat(partnerEntity.getPartnerId()).isEqualTo(savedPartnerEntity.getPartnerId());
+        assertThat(partnerEntity.getPartnerPassword()).isEqualTo(savedPartnerEntity.getPartnerPassword());
+        assertThat(partnerEntity.getPartnerEmail()).isEqualTo(savedPartnerEntity.getPartnerEmail());
+        assertThat(partnerEntity.getPartnerCompanyName()).isEqualTo(savedPartnerEntity.getPartnerCompanyName());
     }
 }

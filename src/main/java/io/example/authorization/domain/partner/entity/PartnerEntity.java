@@ -11,7 +11,7 @@ import java.util.Set;
 @Entity
 @Getter @Setter @EqualsAndHashCode(of = "id")
 @Builder @NoArgsConstructor @AllArgsConstructor
-public class PartnerAccountEntity {
+public class PartnerEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private long partnerNo; // Primary Key : Auto Increment
