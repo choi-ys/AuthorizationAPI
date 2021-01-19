@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 import javax.sql.DataSource;
 
@@ -63,6 +64,8 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.authenticationManager(authenticationManager) // Account 인증 정보를 소유한 Bean
                 .userDetailsService(partnerService) // Account 인증 처리 Service Bean
+                .tokenStore(new JdbcTokenStore(dataSource)) // application에 명시된 dataSource를 tokenStore로 설정
+                .reuseRefreshTokens(false) //refresh token을 이용한 access_token 재 발급 시 기존 refresh token 소멸 처리
         ;
     }
 }
