@@ -1,5 +1,6 @@
 package io.example.authorization.domain.common;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,6 +12,8 @@ public class ProcessingResult<T> {
 
     private boolean success = true;
     private T data;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Error error;
 
     public ProcessingResult(T data) {

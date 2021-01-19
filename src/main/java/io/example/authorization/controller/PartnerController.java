@@ -1,6 +1,7 @@
 package io.example.authorization.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.example.authorization.domain.client.dto.ClientPublish;
 import io.example.authorization.domain.common.ProcessingResult;
 import io.example.authorization.domain.common.resource.ErrorsEntityModel;
 import io.example.authorization.domain.common.resource.ProcessingResultEntityModel;
@@ -12,10 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -46,12 +44,28 @@ public class PartnerController {
         }
     }
 
+    @PostMapping("/client")
+    public ResponseEntity createClientInfo(@RequestBody @Valid ClientPublish clientPublish, Errors errors){
+        if(errors.hasErrors()){
+            return this.badRequest(errors);
+        }
+
+        ProcessingResult processingResult = this.partnerService.createClientDetail(clientPublish);
+        if(processingResult.isSuccess()){
+            return this.createResponse(processingResult);
+        }else{
+            return errorResponse(processingResult);
+        }
+    }
+
     /**
      * Service 처리 결과가 성공이 아닌경우 오류 응답 처리
      */
     private ResponseEntity errorResponse(ProcessingResult processingResult) {
         int errorCode = processingResult.getError().getCode();
         switch (errorCode){
+            case 412:
+                return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(processingResult.getError());
             case 500:
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(processingResult.getError());
             default:

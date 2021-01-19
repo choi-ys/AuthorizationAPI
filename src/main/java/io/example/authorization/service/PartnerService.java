@@ -1,11 +1,15 @@
 package io.example.authorization.service;
 
+import io.example.authorization.domain.client.dto.ClientPublish;
+import io.example.authorization.domain.client.entity.ClientDetailsEntity;
 import io.example.authorization.domain.common.Error;
 import io.example.authorization.domain.common.ProcessingResult;
 import io.example.authorization.domain.partner.entity.PartnerEntity;
 import io.example.authorization.domain.partner.entity.PartnerRole;
+import io.example.authorization.repository.ClientDetailRepository;
 import io.example.authorization.repository.PartnerRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -15,7 +19,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,6 +31,8 @@ public class PartnerService implements UserDetailsService {
 
     private final PartnerRepository partnerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ClientDetailRepository clientDetailRepository;
+    private final ModelMapper modelMapper;
 
     /** 용석:2021-01-18
      * 사용자 계정 생성 로직
@@ -56,6 +64,34 @@ public class PartnerService implements UserDetailsService {
         }
     }
 
+    /**
+     * 회원 가입 이후 API 통신 권한 획득에 필요한 Client id/secret 정보 발급
+     * @param clientPublish
+     * @return
+     */
+    @Transactional
+    public ProcessingResult createClientDetail(ClientPublish clientPublish){
+        Optional<PartnerEntity> optionalPartnerAccountEntity = partnerRepository.findByPartnerNo(clientPublish.getPartnerNo());
+        if(optionalPartnerAccountEntity.isEmpty()){
+            return this.notFound();
+        }
+
+        PartnerEntity partnerEntity = optionalPartnerAccountEntity.get();
+        if( (partnerEntity.getClientId() != null && !partnerEntity.getClientId().isBlank()) ){
+            return new ProcessingResult(Error.builder()
+                    .code(412) // 412 Precondition Failed : 전제 조건 실패 HttpStatusCode 반환
+                    .message("Client 정보가 이미 발급 되었습니다.")
+                    .build()
+            );
+        }
+
+        ClientDetailsEntity clientDetailsEntity = this.modelMapper.map(clientPublish, ClientDetailsEntity.class);
+        partnerEntity.publishedClientInfo();
+        clientDetailsEntity.setPublishedClientInfo(partnerEntity);
+        clientDetailRepository.save(clientDetailsEntity);
+        return new ProcessingResult(clientDetailsEntity);
+    }
+
     private boolean isDuplicatedId(String partnerId){
         long count = partnerRepository.countByPartnerId(partnerId);
         return (count == 0) ? false : true;
@@ -66,6 +102,14 @@ public class PartnerService implements UserDetailsService {
                 .code(500)
                 .message("요청을 처리하는 과정에서 오류가 발생하였습니다. 관리자에게 문의하세요.")
                 .detail(e.getMessage())
+                .build()
+        );
+    }
+
+    private ProcessingResult notFound(){
+        return new ProcessingResult(Error.builder()
+                .code(404)
+                .message("존재 하지 않는 회원 입니다.")
                 .build()
         );
     }

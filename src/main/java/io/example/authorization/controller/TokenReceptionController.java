@@ -3,6 +3,8 @@ package io.example.authorization.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.example.authorization.domain.authorization.AuthToken;
+import io.example.authorization.domain.client.entity.ClientDetailsEntity;
+import io.example.authorization.repository.ClientDetailRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/oauth")
@@ -23,10 +27,20 @@ public class TokenReceptionController {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final ClientDetailRepository clientDetailRepository;
 
+    // http://localhost:8080/oauth/callback?code={autorization_code}&clientId={clientId}
     @GetMapping(value = "/callback")
-    public AuthToken callbackSocial(@RequestParam String code) throws JsonProcessingException {
-        String credentials = "kstmClientId:kstmClientSecret";
+    public AuthToken callbackSocial(@RequestParam String code, @RequestParam String clientId) throws JsonProcessingException {
+        log.info("code : {}, cliendId : {}", code, clientId);
+        Optional<ClientDetailsEntity> optionalClientDetailsEntity = clientDetailRepository.findByClientId(clientId);
+        if(optionalClientDetailsEntity == null){
+            return null;
+        }
+
+        ClientDetailsEntity clientDetailsEntity = optionalClientDetailsEntity.get();
+        String credentials = clientDetailsEntity.getClientId() + ":" +clientDetailsEntity.getClientSecretOrigin();
+
         String encodedCredentials = new String(Base64.encodeBase64(credentials.getBytes()));
 
         HttpHeaders headers = new HttpHeaders();
@@ -36,7 +50,7 @@ public class TokenReceptionController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", code);
         params.add("grant_type", "authorization_code");
-        params.add("redirect_uri", "http://localhost:8080/oauth/callback");
+        params.add("redirect_uri", clientDetailsEntity.getWebServerRedirectUri());
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
         ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8080/oauth/token", request, String.class);
@@ -48,10 +62,19 @@ public class TokenReceptionController {
         return null;
     }
 
-    // http://localhost:8080/oauth/token/refresh?refreshToken=
+    // http://localhost:8080/oauth/token/refresh?refreshToken={refresh_token}&clientId={clientId}
+    // http://localhost:8080/oauth/token/refresh?refreshToken=03874a1a-6cd3-4ae9-ab11-b9945b4178d4&clientId=a352d947-82f6-43fb-a289-21698d0bd97f
     @GetMapping(value = "/token/refresh")
-    public AuthToken refreshToken(@RequestParam String refreshToken) throws JsonProcessingException {
-        String credentials = "kstmClientId:kstmClientSecret";
+    public AuthToken refreshToken(@RequestParam String refreshToken, @RequestParam String clientId) throws JsonProcessingException {
+        log.info("refreshToken : {}, cliendId : {}", refreshToken, clientId);
+
+        Optional<ClientDetailsEntity> optionalClientDetailsEntity = clientDetailRepository.findByClientId(clientId);
+        if(optionalClientDetailsEntity == null){
+            return null;
+        }
+        ClientDetailsEntity clientDetailsEntity = optionalClientDetailsEntity.get();
+        String credentials = clientDetailsEntity.getClientId() + ":" +clientDetailsEntity.getClientSecretOrigin();
+
         String encodedCredentials = new String(Base64.encodeBase64(credentials.getBytes()));
 
         HttpHeaders headers = new HttpHeaders();

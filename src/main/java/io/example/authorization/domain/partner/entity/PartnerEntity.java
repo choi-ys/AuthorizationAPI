@@ -3,14 +3,17 @@ package io.example.authorization.domain.partner.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 
 import javax.persistence.*;
 import java.util.Collections;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter @Setter @EqualsAndHashCode(of = "id")
 @Builder @NoArgsConstructor @AllArgsConstructor
+@Table(name = "partner_entity")
 public class PartnerEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,9 +31,6 @@ public class PartnerEntity {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String clientId; // Token 발급을 위한 Client ID
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String clientSecret; // Token 발급을 위한 Client Secret
-
     @JsonIgnore
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
@@ -42,5 +42,11 @@ public class PartnerEntity {
     public void signUp(){
         this.roles = Collections.singleton(PartnerRole.FORBIDDEN);
         this.status = PartnerStatus.API_NOT_AVAILABLE;
+    }
+
+    public void publishedClientInfo(){
+        this.clientId = UUID.randomUUID().toString();
+        this.roles = Collections.singleton(PartnerRole.TRIAL);
+        this.status = PartnerStatus.DRAFT;
     }
 }
