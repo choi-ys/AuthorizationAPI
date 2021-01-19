@@ -1,11 +1,14 @@
 package io.example.authorization.config;
 
+import io.example.authorization.service.PartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
+import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 
 import javax.sql.DataSource;
 
@@ -21,7 +24,6 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
 
     // http://localhost:8080/oauth/authorize?client_id=clientId&response_type=code&scope=read&redirect_uri=http://localhost:8080/oauth/callback
     // http://localhost:8080/oauth/authorize?client_id=kstmClientId&response_type=code&scope=read&redirect_uri=http://localhost:8080/oauth/callback
-
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         /**
@@ -49,5 +51,18 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
          *              client_id = ?";
          */
         clients.jdbc(dataSource).passwordEncoder(passwordEncoder);
+    }
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    PartnerService partnerService;
+
+    @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        endpoints.authenticationManager(authenticationManager) // Account 인증 정보를 소유한 Bean
+                .userDetailsService(partnerService) // Account 인증 처리 Service Bean
+        ;
     }
 }
