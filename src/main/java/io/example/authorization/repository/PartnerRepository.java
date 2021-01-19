@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface PartnerRepository extends JpaRepository<PartnerEntity, Long> {
     long countByPartnerId(String id);
     Optional<PartnerEntity> findByPartnerId(String partnerId);
+    Optional<PartnerEntity> findByPartnerNo(long partnerNo);
 }

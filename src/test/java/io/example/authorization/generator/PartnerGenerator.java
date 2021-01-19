@@ -15,8 +15,8 @@ public class PartnerGenerator {
     PartnerRepository partnerRepository;
 
     public PartnerSignUp buildPartnerSignUp(){
-        String partnerId = "choi-ys";
-        String partnerPassword = "chldydtjr1!";
+        String partnerId = "naver";
+        String partnerPassword = "password";
         String partnerEmail = "project.log.062@gmail.com";
         String partnerCompanyName = "naver";
 
@@ -30,7 +30,9 @@ public class PartnerGenerator {
 
     public PartnerEntity buildPartnerEntity(){
         PartnerSignUp partnerSignUp = this.buildPartnerSignUp();
-        return this.modelMapper.map(partnerSignUp, PartnerEntity.class);
+        PartnerEntity partnerEntity = this.modelMapper.map(partnerSignUp, PartnerEntity.class);
+        partnerEntity.signUp();
+        return partnerEntity;
     }
 
     public PartnerEntity savedPartnerEntity(){
