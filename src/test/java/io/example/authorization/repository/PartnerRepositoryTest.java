@@ -2,7 +2,6 @@ package io.example.authorization.repository;
 
 import io.example.authorization.common.BaseTest;
 import io.example.authorization.domain.partner.entity.PartnerEntity;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,14 +9,14 @@ import javax.annotation.Resource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled
+@DisplayName("Repository:Partner")
 class PartnerRepositoryTest extends BaseTest {
 
     @Resource
     PartnerRepository partnerRepository;
 
     @Test
-    @DisplayName("사용자 계정 DB 저장")
+    @DisplayName("제휴사 계정 정보 INSERT")
     public void savePartnerEntity(){
         //given
         PartnerEntity partnerEntity = partnerGenerator.buildPartnerEntity();

@@ -11,6 +11,8 @@ import lombok.ToString;
 public class ProcessingResult<T> {
 
     private boolean success = true;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

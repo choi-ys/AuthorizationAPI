@@ -1,11 +1,11 @@
 package io.example.authorization.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.example.authorization.domain.client.dto.ClientPublish;
+import io.example.authorization.domain.client.dto.CreateClient;
 import io.example.authorization.domain.common.ProcessingResult;
 import io.example.authorization.domain.common.resource.ErrorsEntityModel;
 import io.example.authorization.domain.common.resource.ProcessingResultEntityModel;
-import io.example.authorization.domain.partner.dto.PartnerSignUp;
+import io.example.authorization.domain.partner.dto.CreatePartner;
 import io.example.authorization.domain.partner.entity.PartnerEntity;
 import io.example.authorization.service.PartnerService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +19,7 @@ import javax.validation.Valid;
 import java.net.URI;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/api/partner")
@@ -29,12 +30,12 @@ public class PartnerController {
     private final PartnerService partnerService;
 
     @PostMapping
-    public ResponseEntity createPartner(@RequestBody @Valid PartnerSignUp partnerSignUp, Errors errors) throws JsonProcessingException {
+    public ResponseEntity createPartner(@RequestBody @Valid CreatePartner createPartner, Errors errors) throws JsonProcessingException {
         if(errors.hasErrors()){
             return this.badRequest(errors);
         }
 
-        PartnerEntity partnerEntity = this.modelMapper.map(partnerSignUp, PartnerEntity.class);
+        PartnerEntity partnerEntity = this.modelMapper.map(createPartner, PartnerEntity.class);
         ProcessingResult processingResult = this.partnerService.savePartner(partnerEntity);
 
         if(processingResult.isSuccess()){
@@ -45,12 +46,12 @@ public class PartnerController {
     }
 
     @PostMapping("/client")
-    public ResponseEntity createClientInfo(@RequestBody @Valid ClientPublish clientPublish, Errors errors){
+    public ResponseEntity createClientInfo(@RequestBody @Valid CreateClient createClient, Errors errors){
         if(errors.hasErrors()){
             return this.badRequest(errors);
         }
 
-        ProcessingResult processingResult = this.partnerService.createClientDetail(clientPublish);
+        ProcessingResult processingResult = this.partnerService.createClientDetail(createClient);
         if(processingResult.isSuccess()){
             return this.createResponse(processingResult);
         }else{
@@ -64,6 +65,8 @@ public class PartnerController {
     private ResponseEntity errorResponse(ProcessingResult processingResult) {
         int errorCode = processingResult.getError().getCode();
         switch (errorCode){
+            case 404:
+                return this.notFoundWithBody(processingResult);
             case 412:
                 return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(processingResult.getError());
             case 500:
@@ -84,4 +87,19 @@ public class PartnerController {
     public ResponseEntity badRequest(Errors errors){
         return ResponseEntity.badRequest().body(new ErrorsEntityModel(errors));
     }
+
+    /**
+     * 잘못된 요청의 Not Found 응답 처리
+     * @return 404 Not Found
+     */
+    private ResponseEntity notFound() {
+        URI indexUri = linkTo(methodOn(IndexController.class).index()).toUri();
+        return ResponseEntity.notFound().location(indexUri).build();
+    }
+
+    private ResponseEntity notFoundWithBody(ProcessingResult processingResult) {
+        URI indexUri = linkTo(methodOn(IndexController.class).index()).toUri();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(processingResult);
+    }
+
 }

@@ -1,7 +1,7 @@
 package io.example.authorization.service;
 
-import io.example.authorization.domain.client.dto.ClientPublish;
-import io.example.authorization.domain.client.entity.ClientDetailsEntity;
+import io.example.authorization.domain.client.dto.CreateClient;
+import io.example.authorization.domain.client.entity.ClientEntity;
 import io.example.authorization.domain.common.Error;
 import io.example.authorization.domain.common.ProcessingResult;
 import io.example.authorization.domain.partner.entity.PartnerEntity;
@@ -66,12 +66,12 @@ public class PartnerService implements UserDetailsService {
 
     /**
      * 회원 가입 이후 API 통신 권한 획득에 필요한 Client id/secret 정보 발급
-     * @param clientPublish
+     * @param createClient
      * @return
      */
     @Transactional
-    public ProcessingResult createClientDetail(ClientPublish clientPublish){
-        Optional<PartnerEntity> optionalPartnerAccountEntity = partnerRepository.findByPartnerNo(clientPublish.getPartnerNo());
+    public ProcessingResult createClientDetail(CreateClient createClient){
+        Optional<PartnerEntity> optionalPartnerAccountEntity = partnerRepository.findByPartnerNo(createClient.getPartnerNo());
         if(optionalPartnerAccountEntity.isEmpty()){
             return this.notFound();
         }
@@ -85,11 +85,11 @@ public class PartnerService implements UserDetailsService {
             );
         }
 
-        ClientDetailsEntity clientDetailsEntity = this.modelMapper.map(clientPublish, ClientDetailsEntity.class);
+        ClientEntity clientEntity = this.modelMapper.map(createClient, ClientEntity.class);
         partnerEntity.publishedClientInfo();
-        clientDetailsEntity.setPublishedClientInfo(partnerEntity);
-        clientDetailRepository.save(clientDetailsEntity);
-        return new ProcessingResult(clientDetailsEntity);
+        clientEntity.setPublishedClientInfo(partnerEntity);
+        clientDetailRepository.save(clientEntity);
+        return new ProcessingResult(clientEntity);
     }
 
     private boolean isDuplicatedId(String partnerId){

@@ -3,7 +3,7 @@ package io.example.authorization.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.example.authorization.domain.authorization.AuthToken;
-import io.example.authorization.domain.client.entity.ClientDetailsEntity;
+import io.example.authorization.domain.client.entity.ClientEntity;
 import io.example.authorization.repository.ClientDetailRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,13 +33,13 @@ public class TokenReceptionController {
     @GetMapping(value = "/callback")
     public AuthToken callbackSocial(@RequestParam String code, @RequestParam String clientId) throws JsonProcessingException {
         log.info("code : {}, cliendId : {}", code, clientId);
-        Optional<ClientDetailsEntity> optionalClientDetailsEntity = clientDetailRepository.findByClientId(clientId);
+        Optional<ClientEntity> optionalClientDetailsEntity = clientDetailRepository.findByClientId(clientId);
         if(optionalClientDetailsEntity == null){
             return null;
         }
 
-        ClientDetailsEntity clientDetailsEntity = optionalClientDetailsEntity.get();
-        String credentials = clientDetailsEntity.getClientId() + ":" +clientDetailsEntity.getClientSecretOrigin();
+        ClientEntity clientEntity = optionalClientDetailsEntity.get();
+        String credentials = clientEntity.getClientId() + ":" + clientEntity.getClientSecretOrigin();
 
         String encodedCredentials = new String(Base64.encodeBase64(credentials.getBytes()));
 
@@ -50,7 +50,7 @@ public class TokenReceptionController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", code);
         params.add("grant_type", "authorization_code");
-        params.add("redirect_uri", clientDetailsEntity.getWebServerRedirectUri());
+        params.add("redirect_uri", clientEntity.getWebServerRedirectUri());
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
         ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8080/oauth/token", request, String.class);
@@ -68,12 +68,12 @@ public class TokenReceptionController {
     public AuthToken refreshToken(@RequestParam String refreshToken, @RequestParam String clientId) throws JsonProcessingException {
         log.info("refreshToken : {}, cliendId : {}", refreshToken, clientId);
 
-        Optional<ClientDetailsEntity> optionalClientDetailsEntity = clientDetailRepository.findByClientId(clientId);
+        Optional<ClientEntity> optionalClientDetailsEntity = clientDetailRepository.findByClientId(clientId);
         if(optionalClientDetailsEntity == null){
             return null;
         }
-        ClientDetailsEntity clientDetailsEntity = optionalClientDetailsEntity.get();
-        String credentials = clientDetailsEntity.getClientId() + ":" +clientDetailsEntity.getClientSecretOrigin();
+        ClientEntity clientEntity = optionalClientDetailsEntity.get();
+        String credentials = clientEntity.getClientId() + ":" + clientEntity.getClientSecretOrigin();
 
         String encodedCredentials = new String(Base64.encodeBase64(credentials.getBytes()));
 

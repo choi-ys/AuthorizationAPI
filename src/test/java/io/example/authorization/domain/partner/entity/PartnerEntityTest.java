@@ -1,16 +1,17 @@
 package io.example.authorization.domain.partner.entity;
 
-import io.example.authorization.domain.partner.dto.PartnerSignUp;
+import io.example.authorization.domain.partner.dto.CreatePartner;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("Domain:Partner")
 class PartnerEntityTest {
 
     @Test
-    @DisplayName("ModelMapper를 이용한 객체 Mapping")
+    @DisplayName("PartnerSingUp -> PartnerEntity : ModelMapper Mapping")
     public void modelMapperTest(){
         //given
         String partnerId = "choi-ys";
@@ -18,7 +19,7 @@ class PartnerEntityTest {
         String partnerEmail = "project.log.062@gmail.com";
         String partnerCompanyName = "";
 
-        PartnerSignUp partnerSignUp = PartnerSignUp.builder()
+        CreatePartner createPartner = CreatePartner.builder()
                 .partnerId(partnerId)
                 .partnerPassword(partnerPassword)
                 .partnerEmail(partnerEmail)
@@ -28,7 +29,7 @@ class PartnerEntityTest {
         ModelMapper modelMapper = new ModelMapper();
 
         //when
-        PartnerEntity partnerEntity = modelMapper.map(partnerSignUp, PartnerEntity.class);
+        PartnerEntity partnerEntity = modelMapper.map(createPartner, PartnerEntity.class);
 
         //then
         assertThat(partnerEntity.getPartnerId()).isEqualTo(partnerId);

@@ -1,11 +1,11 @@
 package io.example.authorization.repository;
 
-import io.example.authorization.domain.client.entity.ClientDetailsEntity;
+import io.example.authorization.domain.client.entity.ClientEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface ClientDetailRepository extends JpaRepository<ClientDetailsEntity, String> {
+public interface ClientDetailRepository extends JpaRepository<ClientEntity, String> {
 
-    Optional<ClientDetailsEntity> findByClientId(String clientId);
+    Optional<ClientEntity> findByClientId(String clientId);
 }

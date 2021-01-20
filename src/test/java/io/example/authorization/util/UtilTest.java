@@ -1,5 +1,6 @@
 package io.example.authorization.util;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -7,7 +8,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.UUID;
 
+@Disabled
+@DisplayName("Util")
 public class UtilTest {
+
     @Test
     @DisplayName("ClientSecret 발급 Test")
     public void generateClientSecret(){

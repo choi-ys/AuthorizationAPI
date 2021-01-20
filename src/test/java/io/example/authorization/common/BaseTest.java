@@ -2,7 +2,9 @@ package io.example.authorization.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.example.authorization.generator.PartnerGenerator;
+import io.example.authorization.repository.ClientDetailRepository;
 import io.example.authorization.repository.PartnerRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -35,6 +37,15 @@ public class BaseTest {
     @Autowired
     protected PartnerRepository partnerRepository;
 
+    @Autowired
+    protected ClientDetailRepository clientDetailRepository;
+
     @Resource
     protected  PartnerGenerator partnerGenerator;
+
+    @BeforeEach
+    public void setup(){
+        partnerRepository.deleteAll();
+        clientDetailRepository.deleteAll();
+    }
 }
