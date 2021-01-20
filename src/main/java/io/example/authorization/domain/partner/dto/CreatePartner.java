@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 @Setter
 @ToString
 @Builder @NoArgsConstructor @AllArgsConstructor
-public class PartnerSignUp {
+public class CreatePartner {
 
     @NotBlank(message = "아이디를 입력하세요.")
     @Size(min = 3, max = 10, message = "아이디는 3~15자 이내로 입력 가능합니다.")

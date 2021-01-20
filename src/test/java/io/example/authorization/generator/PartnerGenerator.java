@@ -1,11 +1,13 @@
 package io.example.authorization.generator;
 
-import io.example.authorization.domain.partner.dto.PartnerSignUp;
+import io.example.authorization.domain.partner.dto.CreatePartner;
 import io.example.authorization.domain.partner.entity.PartnerEntity;
 import io.example.authorization.repository.PartnerRepository;
+import org.junit.jupiter.api.Disabled;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Disabled
 public class PartnerGenerator {
 
     @Autowired
@@ -14,13 +16,13 @@ public class PartnerGenerator {
     @Autowired
     PartnerRepository partnerRepository;
 
-    public PartnerSignUp buildPartnerSignUp(){
+    public CreatePartner buildPartnerSignUp(){
         String partnerId = "naver";
         String partnerPassword = "password";
         String partnerEmail = "project.log.062@gmail.com";
         String partnerCompanyName = "naver";
 
-        return PartnerSignUp.builder()
+        return CreatePartner.builder()
                 .partnerId(partnerId)
                 .partnerPassword(partnerPassword)
                 .partnerEmail(partnerEmail)
@@ -29,8 +31,8 @@ public class PartnerGenerator {
     }
 
     public PartnerEntity buildPartnerEntity(){
-        PartnerSignUp partnerSignUp = this.buildPartnerSignUp();
-        PartnerEntity partnerEntity = this.modelMapper.map(partnerSignUp, PartnerEntity.class);
+        CreatePartner createPartner = this.buildPartnerSignUp();
+        PartnerEntity partnerEntity = this.modelMapper.map(createPartner, PartnerEntity.class);
         partnerEntity.signUp();
         return partnerEntity;
     }

@@ -5,7 +5,6 @@ import io.example.authorization.domain.common.ProcessingResult;
 import io.example.authorization.domain.partner.entity.PartnerEntity;
 import io.example.authorization.domain.partner.entity.PartnerRole;
 import io.example.authorization.domain.partner.entity.PartnerStatus;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled
+@DisplayName("Service:Partner")
 class PartnerServiceTest extends BaseTest {
 
     @Autowired
@@ -23,8 +22,8 @@ class PartnerServiceTest extends BaseTest {
     PasswordEncoder passwordEncoder;
 
     @Test
-    @DisplayName("회원 생성 Service")
-    public void savePartner(){
+    @DisplayName("파트너 계정 생성 처리")
+    public void createPartnerProcess(){
         //given
         PartnerEntity givenPartnerEntity = partnerGenerator.buildPartnerEntity();
 
@@ -39,7 +38,7 @@ class PartnerServiceTest extends BaseTest {
 
         //then
         // partnerNo항목 Auto Increment 적용 여부 확인
-        assertThat(createdPartnerEntity.getPartnerNo()).isEqualTo(1);
+        assertThat(createdPartnerEntity.getPartnerNo()).isNotZero().isNotNull();
         assertThat(createdPartnerEntity.getPartnerId().equals(givenPartnerEntity.getPartnerId()));
 
         // partnerPassword항목 암호화 적용 여부 확인

@@ -1,23 +1,20 @@
 package io.example.authorization.repository;
 
 import io.example.authorization.common.BaseTest;
-import io.example.authorization.domain.client.entity.ClientDetailsEntity;
+import io.example.authorization.domain.client.entity.ClientEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ClientDetailsEntityRepositoryTest extends BaseTest {
-
-    @Autowired
-    ClientDetailRepository clientDetailRepository;
+@DisplayName("Repository:Client")
+class ClientEntityRepositoryTest extends BaseTest {
 
     @Test
-    @DisplayName("Client 정보 DB 저장")
+    @DisplayName("클라이언트 정보 INSERT")
     public void saveClientDetail(){
         //given
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -30,7 +27,7 @@ class ClientDetailsEntityRepositoryTest extends BaseTest {
         int accessTokenValidity = 60 * 10;
         int refreshTokenValidity = 1200 * 10;
 
-        ClientDetailsEntity clientDetailsEntity = ClientDetailsEntity.builder()
+        ClientEntity clientEntity = ClientEntity.builder()
                 .clientId(clientId)
                 .clientSecret(passwordEncoder.encode(clientSecret))
                 .scope(scope)
@@ -42,17 +39,17 @@ class ClientDetailsEntityRepositoryTest extends BaseTest {
                 .build();
 
         //when
-        ClientDetailsEntity savedClientDetailsEntity = this.clientDetailRepository.save(clientDetailsEntity);
+        ClientEntity savedClientEntity = this.clientDetailRepository.save(clientEntity);
 
         //then
-        assertThat(savedClientDetailsEntity).isNotNull();
-        assertThat(savedClientDetailsEntity.getClientId()).isEqualTo(clientId);
-        assertThat(passwordEncoder.matches(clientSecret, savedClientDetailsEntity.getClientSecret()));
-        assertThat(savedClientDetailsEntity.getScope()).isEqualTo(scope);
-        assertThat(savedClientDetailsEntity.getAuthorizedGrantTypes()).isEqualTo(authorizedGrantTypes);
-        assertThat(savedClientDetailsEntity.getWebServerRedirectUri()).isEqualTo(webServerRedirectUri);
-        assertThat(savedClientDetailsEntity.getAuthorities()).isEqualTo(authorities);
-        assertThat(savedClientDetailsEntity.getAccessTokenValidity()).isEqualTo(accessTokenValidity);
-        assertThat(savedClientDetailsEntity.getRefreshTokenValidity()).isEqualTo(refreshTokenValidity);
+        assertThat(savedClientEntity).isNotNull();
+        assertThat(savedClientEntity.getClientId()).isEqualTo(clientId);
+        assertThat(passwordEncoder.matches(clientSecret, savedClientEntity.getClientSecret()));
+        assertThat(savedClientEntity.getScope()).isEqualTo(scope);
+        assertThat(savedClientEntity.getAuthorizedGrantTypes()).isEqualTo(authorizedGrantTypes);
+        assertThat(savedClientEntity.getWebServerRedirectUri()).isEqualTo(webServerRedirectUri);
+        assertThat(savedClientEntity.getAuthorities()).isEqualTo(authorities);
+        assertThat(savedClientEntity.getAccessTokenValidity()).isEqualTo(accessTokenValidity);
+        assertThat(savedClientEntity.getRefreshTokenValidity()).isEqualTo(refreshTokenValidity);
     }
 }
